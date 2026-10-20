@@ -9,9 +9,10 @@ basic = HTTPBasic()
 @servak.get("/auth")
 def get_auth(creds:HTTPBasicCredentials = Depends(basic)):
     from db import authenticate_user
-    if not authenticate_user(creds.username,creds.password):
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
-    return
+    jwt_token = authenticate_user(creds.username,creds.password)
+    if jwt_token != '':
+           return jwt_token
+    raise HTTPException(status_code=401, detail="Incorrect username or password")
 
 @servak.post("/register")
 def register(username: str = Body(), password: str = Body()):

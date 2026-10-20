@@ -1,6 +1,8 @@
-import jwt, time, os
+import jwt, os
+from datetime import datetime, timedelta, timezone
 from model import UserData
 from dotenv import load_dotenv
+
 
 
 _database : list[UserData] = [
@@ -18,23 +20,31 @@ def add_user(username: str, password: str) -> str:
         return f'{user.username} added.'
     else: return 'User already exists.'
 
-def authenticate_user(username: str, password: str) -> bool:
+def authenticate_user(username: str, password: str) -> str:
     for user in _database:
         if user.username == username and user.password == password:
-            #first JWT implementation
-            get_jwt()
-    return False
+            return get_jwt(user.id)
+    return ''
 
 
-def get_jwt(username: str, password: str) -> str:
+def get_jwt(id: int) -> str:
     load_dotenv()
     key = os.getenv('JWT_KEY')
-    encoded=jwt.encode({'username': username, 'password': password}, key, algorithm='HS256')
+    now = datetime.now(timezone.utc)
+    payload = {
+        'sub':id,
+        'exp':now,
+        'iat':now + timedelta(minutes=3)
+    }
+    return jwt.encode(payload,key,algorithm='HS256')
 
-
-
-
-
+def verify_signature(token: str) -> bool:
+    key = os.getenv('JWT_KEY')
+    sig = token.split('.')[1]
+    sig1 = jwt.decode(token, key, algorithms=['HS256'])
+    if sig == sig1:
+        return True
+    return False
 
 
 def get_all()-> list[str]:
