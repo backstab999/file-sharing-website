@@ -28,23 +28,23 @@ def authenticate_user(username: str, password: str) -> str:
 
 
 def get_jwt(id: int) -> str:
-    load_dotenv()
     key = os.getenv('JWT_KEY')
     now = datetime.now(timezone.utc)
     payload = {
-        'sub':id,
-        'exp':now,
-        'iat':now + timedelta(minutes=3)
+        'sub':str(id),
+        'iat':now,
+        'exp':now + timedelta(minutes=3)
     }
     return jwt.encode(payload,key,algorithm='HS256')
 
 def verify_signature(token: str) -> bool:
     key = os.getenv('JWT_KEY')
-    sig = token.split('.')[1]
-    sig1 = jwt.decode(token, key, algorithms=['HS256'])
-    if sig == sig1:
-        return True
-    return False
+    try:
+        jwt.decode(token, key, algorithms=['HS256'])
+    except Exception as e:
+        print(e)
+        return False
+    return True
 
 
 def get_all()-> list[str]:
