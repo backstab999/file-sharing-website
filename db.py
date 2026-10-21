@@ -1,9 +1,12 @@
 import jwt, os
 from datetime import datetime, timedelta, timezone
 from model import UserData
-from dotenv import load_dotenv
 
+from fastapi import Depends
+from fastapi.security import HTTPBasicCredentials, HTTPBasic
 
+#временная база данных, для удобства разработки на ранних этапах
+#
 
 _database : list[UserData] = [
     UserData(username='Pudge', password='zxc', id = 0),
@@ -20,11 +23,17 @@ def add_user(username: str, password: str) -> str:
         return f'{user.username} added.'
     else: return 'User already exists.'
 
-def authenticate_user(username: str, password: str) -> str:
+
+#region auth
+basic = HTTPBasic()
+def authenticate_user(creds: HTTPBasicCredentials = Depends(basic)) -> str:
+    #todo: с реализацией БД добавить запрос в бд и проверку
     for user in _database:
-        if user.username == username and user.password == password:
+        if user.username == creds.username and user.password == creds.password:
             return get_jwt(user.id)
     return ''
+#endregion
+
 
 
 def get_jwt(id: int) -> str:

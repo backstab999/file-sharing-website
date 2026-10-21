@@ -1,19 +1,34 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI, Body, Depends, HTTPException, Response
-from fastapi.security import HTTPBasicCredentials, HTTPBasic
+
 from db import verify_signature, authenticate_user
 
 servak = FastAPI()
-basic = HTTPBasic()
 load_dotenv()
+
+#region dependencies
+
+
+def auth():
+    return authenticate_user(creds.username, creds.password)
+
+
+#endregion
+
+
 
 #сырая функция авторизации, реализованная через HTTP Basic Auth
 @servak.get("/auth")
-def get_auth(creds:HTTPBasicCredentials = Depends(basic)):
-    jwt_token = authenticate_user(creds.username,creds.password)
+def get_auth(jwt_token: str = Depends(auth)):
     if jwt_token != '':
            return jwt_token
     raise HTTPException(status_code=401, detail="Incorrect username or password")
+
+#первая попытка написать авторизацию через внедрение зависимостей
+@servak.get('/login')
+def login():
+    pass
+
 
 @servak.post("/verify")
 def verify(token: str = Body()):
@@ -36,18 +51,29 @@ def users():
 
 
 #todo:
-#   прочитать внедрение зависимостей dependencies injection fastapi
-#   клинап репо
-#   requirements.txt
+#   +++++++ прочитать внедрение зависимостей dependencies injection fastapi
+#   +++++++     клинап репо
+#
 #   авторизация через обработку эндопинта через зависимости
+#   зависимость для авторизации -- db.py authenticate_user превратить в зависимость
+"""
+зависимость user _dep
+ может получать имя и пароль пользователя из НТТР-аргументов, 
+ искать их в базе данных и возвращать токен,
+  применяемый для отслеживания в дальнейшем этого пользователя.
+   Ваша функция веб-обработки никогда не вызывает зависимость напрямую -
+    она обрабатывается во время вызова функции.
+"""
+#
+#   requirements.txt
 #   restapi
 #   filesharing
 #   DB таблица user минимальная
 #
 #   service -- внутрянка - локальное хранилище для файлов
-#
 #   read SQL DB | db таблицы ORM + migration
 #
+#   написание unit тестов
 #   async + Starlette
 #   deploy CI/CD + DOCKER ( baza )
 #
