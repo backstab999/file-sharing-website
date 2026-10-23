@@ -1,0 +1,12 @@
+#   todo:
+#   requirements.txt
+#   restapi
+#   filesharing
+#   DB таблица user минимальная
+#
+#   service -- внутрянка - локальное хранилище для файлов
+#   read SQL DB | db таблицы ORM + migration
+#
+#   написание unit тестов
+#   async + Starlette
+#   deploy CI/CD + DOCKER ( baza )

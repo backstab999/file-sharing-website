@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 
+
 class UserData(BaseModel):
     username: str
-    password: str
+    hashed: str
     id: int
+#todo: roles / status
