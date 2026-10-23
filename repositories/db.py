@@ -14,9 +14,7 @@ _database : dict[str, UserData] = {
 }
 
 def user_exists(username: str):
-    if username in _database:
-        return True
-    return False
+    return username in _database
 
 def user_create(username, hashed)-> int:
     _database[username] = UserData(username=username,
