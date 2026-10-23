@@ -1,6 +1,4 @@
 #   todo:
-#   requirements.txt
-#   restapi
 #   DB таблица user минимальная
 #   filesharing
 #
