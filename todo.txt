@@ -1,8 +1,9 @@
 #   todo:
 #   requirements.txt
 #   restapi
-#   filesharing
+#   обработка ошибок Responce и handler-ы
 #   DB таблица user минимальная
+#   filesharing
 #
 #   service -- внутрянка - локальное хранилище для файлов
 #   read SQL DB | db таблицы ORM + migration

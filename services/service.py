@@ -5,7 +5,7 @@ import bcrypt
 import jwt
 from fastapi.security import HTTPBasicCredentials
 
-from repositories.db import get_user_data, user_exists
+from repositories.db import get_user_data, user_exists, user_create
 
 
 #сюда позже должны передаваться еще и статус + роль пользователя для авторизации в jwt после ответа от БД
@@ -18,6 +18,14 @@ def authenticate_user(creds: HTTPBasicCredentials) -> str | None:
     if verify_password(hashed_password, creds.password):
         return get_jwt(user_id)
     return None #todo: error handler
+
+def register_user(username: str, password: str)-> int | None:
+    #todo: validate_username && validate_password
+    if user_exists(username):
+        return None#todo: raise handler
+    hashed_password = get_hashed_password(password)
+    user_id = user_create(username, hashed_password)
+    return user_id
 
 #добавить в payload роль и статус пользователя для прав (авторизации)
 def get_jwt(user_id: int) -> str:

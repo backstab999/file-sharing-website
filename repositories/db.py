@@ -13,13 +13,22 @@ _database : dict[str, UserData] = {
     'Doom': UserData(username='Doom', hashed=hashed3, id = 2), #666
 }
 
-
 def user_exists(username: str):
-    return True
+    if username in _database:
+        return True
+    return False
 
-def get_user_data(username: str)-> tuple[int, str]:
+def user_create(username, hashed)-> int:
+    _database[username] = UserData(username=username,
+                                   hashed=hashed,
+                                   id=len(_database)+1)
+    return _database[username].id
+
+def get_user_data(username: str)-> tuple[int, str] | str:
+    if not user_exists(username):
+        return 'User does not exist' #todo: error handler
     return _database[username].id, _database[username].hashed
 
-def get_users() -> list[UserData]:
+def get_users() -> list[str]:
     users = [f'{u.id} {u.username}' for u in _database.values()]
     return users
