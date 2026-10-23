@@ -3,26 +3,22 @@ from datetime import UTC, datetime, timedelta, timezone
 
 import bcrypt
 import jwt
-from fastapi.security import HTTPBasicCredentials
 
 from repositories.db import get_user_data, user_exists, user_create
 
 
 #сюда позже должны передаваться еще и статус + роль пользователя для авторизации в jwt после ответа от БД
-def authenticate_user(creds: HTTPBasicCredentials) -> str | None:
-    username = creds.username
-    if not user_exists(username):
-        return None  #todo: error handler
-
+def authenticate_user(username: str, password: str) -> str | None:
     user_id, hashed_password = get_user_data(username)
-    if verify_password(hashed_password, creds.password):
+    if user_id is None or hashed_password is None:
+        return None
+    if verify_password(hashed_password, password):
         return get_jwt(user_id)
-    return None #todo: error handler
 
 def register_user(username: str, password: str)-> int | None:
     #todo: validate_username && validate_password
     if user_exists(username):
-        return None#todo: raise handler
+        return None
     hashed_password = get_hashed_password(password)
     user_id = user_create(username, hashed_password)
     return user_id

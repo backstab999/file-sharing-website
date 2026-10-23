@@ -12,14 +12,17 @@ basic = HTTPBasic()
 
 @servak.get("/auth/login")
 def login(creds: HTTPBasicCredentials = Depends(basic)):
-    return authenticate_user(creds)
+    jwt = authenticate_user(creds)
+    if jwt is None:
+        return HTTPException(status_code=401, detail="Incorrect username or password")
+    return jwt
 
 @servak.post("/auth/register")
 def register(username: str = Body(...), password: str = Body(...)):
     id = register_user(username, password)
-    if id != None:
-        return f'User {id} {username} registered successfully'
-    return 'ERROR' #todo: error handler
+    if id is None:
+        return HTTPException(status_code=409,detail="Username already taken")
+    return f'User {id} {username} registered successfully'
 
 @servak.get("/users")
 def users(verify: str=Depends(token_verify)):

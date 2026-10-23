@@ -24,9 +24,9 @@ def user_create(username, hashed)-> int:
                                    id=len(_database)+1)
     return _database[username].id
 
-def get_user_data(username: str)-> tuple[int, str] | str:
+def get_user_data(username: str)-> tuple[int, str] | None:
     if not user_exists(username):
-        return 'User does not exist' #todo: error handler
+        return None
     return _database[username].id, _database[username].hashed
 
 def get_users() -> list[str]:
