@@ -12,7 +12,7 @@ basic = HTTPBasic()
 
 @servak.get("/auth/login")
 def login(creds: HTTPBasicCredentials = Depends(basic)):
-    jwt = authenticate_user(creds)
+    jwt = authenticate_user(creds.username, creds.password)
     if jwt is None:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     return {"access_token": jwt, "token_type": "bearer"}

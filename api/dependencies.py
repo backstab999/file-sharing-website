@@ -1,5 +1,7 @@
+import os
+
+import jwt
 from fastapi import Header
-import os, jwt
 
 
 def token_verify(token: str = Header()):

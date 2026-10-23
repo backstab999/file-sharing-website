@@ -4,16 +4,17 @@ from datetime import UTC, datetime, timedelta, timezone
 import bcrypt
 import jwt
 
-from repositories.db import get_user_data, user_exists, user_create
+from repositories.db import get_user_data, user_create, user_exists
 
 
 #сюда позже должны передаваться еще и статус + роль пользователя для авторизации в jwt после ответа от БД
 def authenticate_user(username: str, password: str) -> str | None:
-    user_id, hashed_password = get_user_data(username)
-    if user_id is None or hashed_password is None:
-        return None
+    data = get_user_data(username)
+    if data is None: return None
+    user_id, hashed_password = data
     if verify_password(hashed_password, password):
         return get_jwt(user_id)
+    return None
 
 def register_user(username: str, password: str)-> int | None:
     #todo: validate_username && validate_password
